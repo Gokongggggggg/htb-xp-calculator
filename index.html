@@ -38,25 +38,6 @@
               Next level needs <strong id="nextLevelXp">422 XP</strong>. XP curve is community-derived.
             </div>
           </form>
-
-          <div class="activity-panel" aria-label="Activity equivalency controls">
-            <div class="panel-title">
-              <span>Activity reward</span>
-            </div>
-            <div class="form-grid">
-              <label>
-                Activity type
-                <select id="activityType">
-                  <option value="machines">Machine</option>
-                  <option value="challenges">Challenge</option>
-                </select>
-              </label>
-              <label>
-                Difficulty
-                <select id="activityDifficulty"></select>
-              </label>
-            </div>
-          </div>
         </aside>
 
         <section class="results-panel">
@@ -101,6 +82,19 @@
               <div class="card-heading">
                 <h2>Activity Equivalency</h2>
                 <span id="equivalencyBase">For Grandmaster I</span>
+              </div>
+              <div class="activity-controls" aria-label="Activity equivalency controls">
+                <label>
+                  Activity type
+                  <select id="activityType">
+                    <option value="machines">Machine</option>
+                    <option value="challenges">Challenge</option>
+                  </select>
+                </label>
+                <label>
+                  Difficulty
+                  <select id="activityDifficulty"></select>
+                </label>
               </div>
               <div class="activity-result">
                 <div class="activity-number">

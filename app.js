@@ -85,6 +85,14 @@ function rankForLevel(level) {
   return RANK_THRESHOLDS.filter((rank) => level >= rank.level).at(-1)?.rank ?? "Unranked";
 }
 
+function currentRankThreshold(level) {
+  return RANK_THRESHOLDS.filter((rank) => level >= rank.level).at(-1) ?? RANK_THRESHOLDS[0];
+}
+
+function nextRankThreshold(level) {
+  return RANK_THRESHOLDS.find((rank) => level < rank.level) ?? null;
+}
+
 function formatNumber(value) {
   return new Intl.NumberFormat("en-US").format(Math.round(value));
 }
@@ -142,6 +150,56 @@ function syncInputs(state) {
   elements.currentXp.value = state.currentXp;
 }
 
+function rankStateFor(rank, state) {
+  const currentRank = currentRankThreshold(state.currentLevel);
+  const nextRank = nextRankThreshold(state.currentLevel);
+
+  if (rank.rank === currentRank.rank) {
+    return "current";
+  }
+
+  if (state.currentLevel >= rank.level) {
+    return "complete";
+  }
+
+  if (nextRank && rank.rank === nextRank.rank) {
+    return "next";
+  }
+
+  return "locked";
+}
+
+function familyStateFor(tiers, state) {
+  const currentRank = currentRankThreshold(state.currentLevel);
+  const nextRank = nextRankThreshold(state.currentLevel);
+  const firstTier = tiers[0];
+  const finalTier = tiers.at(-1);
+
+  if (currentRank.family === firstTier.family) {
+    return "current";
+  }
+
+  if (state.currentLevel >= finalTier.level) {
+    return "complete";
+  }
+
+  if (nextRank && nextRank.family === firstTier.family) {
+    return "next";
+  }
+
+  return "locked";
+}
+
+function statusConfig(status) {
+  const statuses = {
+    complete: { icon: "OK", label: "Complete" },
+    current: { icon: "GO", label: "In progress" },
+    next: { icon: "LOCK", label: "Next locked" },
+    locked: { icon: "LOCK", label: "Locked" }
+  };
+  return statuses[status] ?? statuses.locked;
+}
+
 function renderRankProjection(state) {
   elements.rankProjection.innerHTML = "";
 
@@ -150,8 +208,9 @@ function renderRankProjection(state) {
     const firstTier = tiers[0];
     const finalTier = tiers.at(-1);
     const nextTier = tiers.find((rank) => state.currentLevel < rank.level);
-    const reachedFamily = state.currentLevel >= firstTier.level;
     const completeFamily = state.currentLevel >= finalTier.level;
+    const familyState = familyStateFor(tiers, state);
+    const familyStatus = statusConfig(familyState);
     const summaryRemaining = xpRemainingToLevel(
       state.currentLevel,
       state.currentXp,
@@ -159,7 +218,7 @@ function renderRankProjection(state) {
     );
 
     const details = document.createElement("details");
-    details.className = `rank-group${reachedFamily ? " is-reached" : ""}`;
+    details.className = `rank-group is-${familyState}`;
     details.open = state.goal.family === family;
 
     const status = completeFamily
@@ -170,9 +229,10 @@ function renderRankProjection(state) {
 
     details.innerHTML = `
       <summary>
+        <div class="status-icon" aria-hidden="true">${familyStatus.icon}</div>
         <div class="rank-meta">
           <strong>${family}</strong>
-          <span>${status}</span>
+          <span>${familyStatus.label} · ${status}</span>
         </div>
         <div class="pill">Level ${firstTier.level}-${finalTier.level}</div>
       </summary>
@@ -182,12 +242,15 @@ function renderRankProjection(state) {
     const tierList = details.querySelector(".tier-list");
     tiers.forEach((rank) => {
       const remainingXp = xpRemainingToLevel(state.currentLevel, state.currentXp, rank.level);
+      const tierState = rankStateFor(rank, state);
+      const tierStatus = statusConfig(tierState);
       const row = document.createElement("div");
-      row.className = `rank-row${state.currentLevel >= rank.level ? " is-reached" : ""}`;
+      row.className = `rank-row is-${tierState}`;
       row.innerHTML = `
+        <div class="status-icon" aria-hidden="true">${tierStatus.icon}</div>
         <div class="rank-meta">
           <strong>${rank.rank}</strong>
-          <span>${remainingXp === 0 ? "Reached" : `${formatNumber(remainingXp)} XP remaining`}</span>
+          <span>${tierStatus.label}${remainingXp === 0 ? "" : ` · ${formatNumber(remainingXp)} XP remaining`}</span>
         </div>
         <div class="pill">Level ${rank.level}</div>
       `;
