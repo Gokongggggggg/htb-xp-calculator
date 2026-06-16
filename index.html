@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>HTB XP Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="workspace" aria-label="HTB XP calculator">
+        <aside class="control-panel">
+          <div class="brand-row">
+            <div class="mark" aria-hidden="true">H</div>
+            <div>
+              <h1>HTB XP Calculator</h1>
+              <p>Rank XP projection from your current level to Grandmaster.</p>
+            </div>
+          </div>
+
+          <form id="calculatorForm" class="form-grid">
+            <label>
+              Current level
+              <input id="currentLevel" type="number" min="1" max="140" step="1" value="16" inputmode="numeric">
+            </label>
+
+            <label>
+              Current XP progress
+              <input id="currentXp" type="number" min="0" step="1" value="2" inputmode="numeric">
+            </label>
+
+            <label>
+              Target rank
+              <select id="goalSelect"></select>
+            </label>
+
+            <div class="input-note">
+              Next level requires <strong id="nextLevelXp">422 XP</strong>. XP curve is community-derived until more level data is collected.
+            </div>
+          </form>
+
+          <div class="reward-panel" aria-label="Academy projection">
+            <div class="panel-title">
+              <span>Academy projection</span>
+            </div>
+            <div class="academy-form">
+              <label>
+                Module difficulty
+                <select id="academyDifficulty"></select>
+              </label>
+              <label>
+                Sections
+                <input id="academySections" type="number" min="0" step="1" value="10" inputmode="numeric">
+              </label>
+              <label>
+                Questions
+                <input id="academyQuestions" type="number" min="0" step="1" value="10" inputmode="numeric">
+              </label>
+              <label class="check-row">
+                <input id="academyPathBonus" type="checkbox" checked>
+                Include path bonus
+              </label>
+            </div>
+          </div>
+        </aside>
+
+        <section class="results-panel">
+          <div class="summary-strip" aria-label="Current progress summary">
+            <div>
+              <span>Current rank</span>
+              <strong id="currentRank">No rank</strong>
+            </div>
+            <div>
+              <span>Target level</span>
+              <strong id="targetLevel">91</strong>
+            </div>
+            <div>
+              <span>Remaining XP</span>
+              <strong id="targetRemainingXp">92,698</strong>
+            </div>
+            <div>
+              <span>Progress to next</span>
+              <strong id="nextProgressPercent">0%</strong>
+            </div>
+          </div>
+
+          <div class="progress-area">
+            <div class="progress-header">
+              <div>
+                <span>Level progress</span>
+                <strong id="progressLabel">2 / 422 XP</strong>
+              </div>
+              <span id="levelRange">Level 16 -> 17</span>
+            </div>
+            <div class="progress-track" aria-hidden="true">
+              <div id="progressFill"></div>
+            </div>
+          </div>
+
+          <div class="content-grid">
+            <section class="card wide">
+              <div class="card-heading">
+                <h2>Rank Projection</h2>
+                <span>Open a rank to view tiers</span>
+              </div>
+              <div id="rankProjection" class="rank-list"></div>
+            </section>
+
+            <section class="card">
+              <div class="card-heading">
+                <h2>Activity Equivalency</h2>
+                <span id="equivalencyBase">For selected target</span>
+              </div>
+              <div id="machineEquivalency" class="metric-list"></div>
+            </section>
+
+            <section class="card">
+              <div class="card-heading">
+                <h2>Target Summary</h2>
+                <span id="goalName">Grandmaster</span>
+              </div>
+              <div class="goal-grid">
+                <div>
+                  <span>Required level</span>
+                  <strong id="goalRequiredLevel">91</strong>
+                </div>
+                <div>
+                  <span>Current level</span>
+                  <strong id="goalCurrentLevel">16</strong>
+                </div>
+                <div>
+                  <span>Remaining levels</span>
+                  <strong id="goalRemainingLevels">75</strong>
+                </div>
+                <div>
+                  <span>Estimated XP</span>
+                  <strong id="goalEstimatedXp">92,698 XP</strong>
+                </div>
+              </div>
+            </section>
+
+            <section class="card wide">
+              <div class="card-heading">
+                <h2>Academy Projection</h2>
+                <span id="academyProjectionLabel">Medium module</span>
+              </div>
+              <div class="goal-grid">
+                <div>
+                  <span>Projected XP</span>
+                  <strong id="academyProjectedXp">900 XP</strong>
+                </div>
+                <div>
+                  <span>Projected level</span>
+                  <strong id="academyProjectedLevel">16 -> 18</strong>
+                </div>
+                <div>
+                  <span>Projected rank</span>
+                  <strong id="academyProjectedRank">Apprentice I</strong>
+                </div>
+                <div>
+                  <span>Path bonus</span>
+                  <strong id="academyBonus">500 XP</strong>
+                </div>
+              </div>
+            </section>
+          </div>
+        </section>
+      </section>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>
