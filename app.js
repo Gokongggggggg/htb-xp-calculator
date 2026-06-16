@@ -196,10 +196,10 @@ function familyStateFor(tiers, state) {
 
 function statusConfig(status) {
   const statuses = {
-    complete: { icon: "OK", label: "Complete" },
-    current: { icon: "GO", label: "In progress" },
-    next: { icon: "LOCK", label: "Next locked" },
-    locked: { icon: "LOCK", label: "Locked" }
+    complete: { icon: "", label: "COMPLETE" },
+    current: { icon: "", label: "IN PROGRESS" },
+    next: { icon: "", label: "NEXT LOCKED" },
+    locked: { icon: "", label: "LOCKED" }
   };
   return statuses[status] ?? statuses.locked;
 }

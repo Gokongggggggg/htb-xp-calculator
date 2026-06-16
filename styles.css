@@ -20,10 +20,40 @@
 }
 
 body {
+  position: relative;
   min-height: 100vh;
   margin: 0;
   background: var(--bg);
   color: var(--text);
+  overflow-x: hidden;
+}
+
+body::before,
+body::after {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+}
+
+body::before {
+  z-index: -2;
+  background:
+    radial-gradient(circle at 50% 18%, rgba(159, 239, 0, 0.13), transparent 28%),
+    radial-gradient(circle at 78% 72%, rgba(159, 239, 0, 0.055), transparent 24%),
+    var(--bg);
+}
+
+body::after {
+  z-index: -1;
+  opacity: 0.48;
+  background-image:
+    radial-gradient(circle, rgba(159, 239, 0, 0.22) 1px, transparent 1px),
+    linear-gradient(rgba(164, 177, 205, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(164, 177, 205, 0.045) 1px, transparent 1px);
+  background-position: 0 0, 0 0, 0 0;
+  background-size: 42px 42px, 56px 56px, 56px 56px;
+  animation: cyber-drift 42s linear infinite;
 }
 
 button,
@@ -33,6 +63,8 @@ select {
 }
 
 .app-shell {
+  position: relative;
+  z-index: 0;
   width: min(1440px, 100%);
   min-height: 100vh;
   margin: 0 auto;
@@ -179,6 +211,15 @@ span {
   border: 1px solid var(--border);
   border-radius: 16px;
   background: var(--surface);
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease, background 180ms ease;
+}
+
+.summary-strip > div:hover,
+.progress-area:hover,
+.card:hover {
+  transform: translateY(-2px);
+  border-color: #314461;
+  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.22);
 }
 
 .summary-strip > div {
@@ -271,10 +312,11 @@ h2 {
 
 .rank-group {
   overflow: hidden;
-  transition: border-color 160ms ease, background 160ms ease;
+  transition: border-color 180ms ease, background 180ms ease, box-shadow 180ms ease, transform 180ms ease, opacity 180ms ease;
 }
 
 .rank-group:hover {
+  transform: translateY(-1px);
   border-color: rgba(159, 239, 0, 0.38);
 }
 
@@ -310,6 +352,7 @@ h2 {
   background: var(--surface);
   color: var(--accent);
   font-weight: 950;
+  transition: border-color 180ms ease, color 180ms ease, background 180ms ease;
 }
 
 .rank-group[open] summary::before {
@@ -318,6 +361,7 @@ h2 {
 }
 
 .status-icon {
+  position: relative;
   display: inline-grid;
   width: 46px;
   height: 34px;
@@ -326,8 +370,12 @@ h2 {
   border-radius: 10px;
   background: var(--surface);
   color: var(--text-muted);
-  font-size: 0.68rem;
   font-weight: 950;
+}
+
+.status-icon::before {
+  display: block;
+  content: "";
 }
 
 .tier-list {
@@ -344,29 +392,51 @@ h2 {
 
 .rank-group.is-complete,
 .rank-row.is-complete {
-  border-color: rgba(159, 239, 0, 0.36);
-  background: rgba(159, 239, 0, 0.08);
+  border-color: rgba(159, 239, 0, 0.35);
+  background: rgba(159, 239, 0, 0.06);
 }
 
 .rank-group.is-complete .status-icon,
 .rank-row.is-complete .status-icon {
-  border-color: transparent;
-  background: var(--accent);
-  color: #0b1220;
+  border-color: rgba(159, 239, 0, 0.32);
+  background: rgba(159, 239, 0, 0.1);
+  color: var(--accent);
+}
+
+.rank-group.is-complete .status-icon::before,
+.rank-row.is-complete .status-icon::before {
+  content: "✓";
+  color: var(--accent);
+  font-size: 1.1rem;
+  line-height: 1;
 }
 
 .rank-group.is-current,
 .rank-row.is-current {
-  border-color: rgba(159, 239, 0, 0.64);
-  background: rgba(159, 239, 0, 0.12);
+  border-color: var(--accent);
+  background: rgba(159, 239, 0, 0.1);
   box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.rank-group.is-current {
+  box-shadow: inset 3px 0 0 var(--accent), 0 0 18px rgba(159, 239, 0, 0.18);
 }
 
 .rank-group.is-current .status-icon,
 .rank-row.is-current .status-icon {
-  border-color: rgba(159, 239, 0, 0.55);
-  background: #213513;
+  border-color: var(--accent);
+  background: rgba(159, 239, 0, 0.14);
   color: var(--accent);
+}
+
+.rank-group.is-current .status-icon::before,
+.rank-row.is-current .status-icon::before {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(159, 239, 0, 0.22);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spinner-rotate 1.4s linear infinite;
 }
 
 .rank-group.is-next,
@@ -383,7 +453,48 @@ h2 {
 
 .rank-group.is-locked,
 .rank-row.is-locked {
-  opacity: 0.72;
+  border-color: var(--border);
+  background: var(--surface);
+  opacity: 0.66;
+}
+
+.rank-group.is-locked summary::before {
+  border-color: var(--border);
+  background: var(--surface);
+  color: var(--text-muted);
+}
+
+.rank-group.is-locked .status-icon,
+.rank-row.is-locked .status-icon {
+  border-color: var(--border);
+  background: var(--surface);
+  color: var(--text-muted);
+}
+
+.rank-group.is-next .status-icon::before,
+.rank-row.is-next .status-icon::before,
+.rank-group.is-locked .status-icon::before,
+.rank-row.is-locked .status-icon::before {
+  width: 15px;
+  height: 11px;
+  margin-top: 6px;
+  border-radius: 3px;
+  background: currentColor;
+  box-shadow: 0 -8px 0 -4px transparent;
+}
+
+.rank-group.is-next .status-icon::after,
+.rank-row.is-next .status-icon::after,
+.rank-group.is-locked .status-icon::after,
+.rank-row.is-locked .status-icon::after {
+  position: absolute;
+  width: 13px;
+  height: 13px;
+  margin-top: -8px;
+  border: 2px solid currentColor;
+  border-bottom: 0;
+  border-radius: 9px 9px 0 0;
+  content: "";
 }
 
 .rank-meta {
@@ -411,9 +522,15 @@ h2 {
 }
 
 .rank-row.is-complete .pill {
-  border-color: transparent;
-  background: var(--accent);
-  color: #0b1220;
+  border-color: rgba(159, 239, 0, 0.28);
+  background: rgba(159, 239, 0, 0.1);
+  color: var(--accent);
+}
+
+.rank-row.is-current .pill {
+  border-color: var(--accent);
+  background: rgba(159, 239, 0, 0.14);
+  color: var(--accent);
 }
 
 .activity-card {
@@ -492,12 +609,33 @@ h2 {
   }
 }
 
+@keyframes cyber-drift {
+  from {
+    background-position: 0 0, 0 0, 0 0;
+  }
+  to {
+    background-position: 84px 42px, 56px 56px, 56px 56px;
+  }
+}
+
+@keyframes spinner-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     animation-duration: 1ms !important;
     transition-duration: 1ms !important;
+  }
+
+  body::after,
+  .rank-group.is-current .status-icon::before,
+  .rank-row.is-current .status-icon::before {
+    animation: none !important;
   }
 }
 
