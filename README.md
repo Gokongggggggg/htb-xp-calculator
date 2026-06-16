@@ -1,6 +1,6 @@
 # HTB XP Calculator
 
-Static MVP for calculating Hack The Box XP progression, detailed rank tiers, Labs activity equivalency, and Academy XP projection up to Grandmaster.
+Static MVP for calculating Hack The Box XP progression, detailed rank tiers, and Labs activity equivalency up to Grandmaster.
 
 ## Run
 
@@ -46,4 +46,4 @@ Grandmaster III: 106
 
 ## XP Rewards
 
-Labs machine, Labs challenge, and Academy module rewards are encoded directly from the HTB XP data knowledge base in `app.js`.
+Labs machine and challenge rewards are encoded directly from the HTB XP data knowledge base in `app.js`.

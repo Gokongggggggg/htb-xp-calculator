@@ -1,10 +1,4 @@
 const XP_DATA = {
-  academy: {
-    fundamental: { label: "Fundamental", sectionXp: 10, questionXp: 20, pathBonus: 0 },
-    easy: { label: "Easy", sectionXp: 15, questionXp: 30, pathBonus: 300 },
-    medium: { label: "Medium", sectionXp: 20, questionXp: 40, pathBonus: 500 },
-    hard: { label: "Hard", sectionXp: 40, questionXp: 60, pathBonus: 1000 }
-  },
   labs: {
     machines: {
       very_easy: { label: "Very Easy Machine", user: 100, root: 150, total: 250 },
@@ -48,36 +42,27 @@ const RANK_THRESHOLDS = [
 ];
 
 const RANK_FAMILIES = [...new Set(RANK_THRESHOLDS.map((rank) => rank.family))];
+const DIFFICULTY_ORDER = ["very_easy", "easy", "medium", "hard", "insane"];
 
 const elements = {
   currentLevel: document.querySelector("#currentLevel"),
   currentXp: document.querySelector("#currentXp"),
   goalSelect: document.querySelector("#goalSelect"),
-  academyDifficulty: document.querySelector("#academyDifficulty"),
-  academySections: document.querySelector("#academySections"),
-  academyQuestions: document.querySelector("#academyQuestions"),
-  academyPathBonus: document.querySelector("#academyPathBonus"),
+  activityType: document.querySelector("#activityType"),
+  activityDifficulty: document.querySelector("#activityDifficulty"),
   nextLevelXp: document.querySelector("#nextLevelXp"),
   currentRank: document.querySelector("#currentRank"),
-  targetLevel: document.querySelector("#targetLevel"),
+  targetRank: document.querySelector("#targetRank"),
   targetRemainingXp: document.querySelector("#targetRemainingXp"),
-  nextProgressPercent: document.querySelector("#nextProgressPercent"),
   progressLabel: document.querySelector("#progressLabel"),
   levelRange: document.querySelector("#levelRange"),
   progressFill: document.querySelector("#progressFill"),
   rankProjection: document.querySelector("#rankProjection"),
-  machineEquivalency: document.querySelector("#machineEquivalency"),
   equivalencyBase: document.querySelector("#equivalencyBase"),
-  goalName: document.querySelector("#goalName"),
-  goalRequiredLevel: document.querySelector("#goalRequiredLevel"),
-  goalCurrentLevel: document.querySelector("#goalCurrentLevel"),
-  goalRemainingLevels: document.querySelector("#goalRemainingLevels"),
-  goalEstimatedXp: document.querySelector("#goalEstimatedXp"),
-  academyProjectionLabel: document.querySelector("#academyProjectionLabel"),
-  academyProjectedXp: document.querySelector("#academyProjectedXp"),
-  academyProjectedLevel: document.querySelector("#academyProjectedLevel"),
-  academyProjectedRank: document.querySelector("#academyProjectedRank"),
-  academyBonus: document.querySelector("#academyBonus")
+  activityRewardLabel: document.querySelector("#activityRewardLabel"),
+  activityCount: document.querySelector("#activityCount"),
+  activityCountLabel: document.querySelector("#activityCountLabel"),
+  activityBreakdown: document.querySelector("#activityBreakdown")
 };
 
 function xpForNextLevel(level) {
@@ -94,18 +79,6 @@ function xpRemainingToLevel(currentLevel, currentXp, targetLevel) {
     total += xpForNextLevel(level);
   }
   return total;
-}
-
-function advanceLevel(currentLevel, currentXp, gainedXp) {
-  let level = currentLevel;
-  let progress = currentXp + gainedXp;
-
-  while (progress >= xpForNextLevel(level)) {
-    progress -= xpForNextLevel(level);
-    level += 1;
-  }
-
-  return { level, progress };
 }
 
 function rankForLevel(level) {
@@ -134,14 +107,13 @@ function populateSelect(select, items, getValue, getLabel) {
   });
 }
 
-function getAcademyXp(state) {
-  const reward = XP_DATA.academy[state.academyDifficulty];
-  const bonus = state.academyPathBonus ? reward.pathBonus : 0;
-  return {
-    reward,
-    bonus,
-    total: state.academySections * reward.sectionXp + state.academyQuestions * reward.questionXp + bonus
-  };
+function getActivityReward(type, difficulty) {
+  const rewards = XP_DATA.labs[type];
+  return rewards[difficulty] ?? rewards.medium ?? Object.values(rewards)[0];
+}
+
+function getActivityXp(type, reward) {
+  return type === "machines" ? reward.total : reward.xp;
 }
 
 function getState() {
@@ -149,16 +121,18 @@ function getState() {
   const nextLevelXp = xpForNextLevel(currentLevel);
   const currentXp = clampNumber(elements.currentXp.value, 0, nextLevelXp - 1, 0);
   const goal = RANK_THRESHOLDS.find((item) => item.rank === elements.goalSelect.value) ?? RANK_THRESHOLDS.at(-3);
+  const activityType = elements.activityType.value === "challenges" ? "challenges" : "machines";
+  const activityDifficulty = elements.activityDifficulty.value || "medium";
+  const activityReward = getActivityReward(activityType, activityDifficulty);
 
   return {
     currentLevel,
     nextLevelXp,
     currentXp,
     goal,
-    academyDifficulty: elements.academyDifficulty.value || "medium",
-    academySections: clampNumber(elements.academySections.value, 0, 999, 0),
-    academyQuestions: clampNumber(elements.academyQuestions.value, 0, 999, 0),
-    academyPathBonus: elements.academyPathBonus.checked
+    activityType,
+    activityDifficulty,
+    activityReward
   };
 }
 
@@ -166,8 +140,6 @@ function syncInputs(state) {
   elements.currentLevel.value = state.currentLevel;
   elements.currentXp.max = state.nextLevelXp - 1;
   elements.currentXp.value = state.currentXp;
-  elements.academySections.value = state.academySections;
-  elements.academyQuestions.value = state.academyQuestions;
 }
 
 function renderRankProjection(state) {
@@ -226,44 +198,38 @@ function renderRankProjection(state) {
   });
 }
 
-function renderActivityEquivalency(remainingXp) {
+function renderActivityEquivalency(state, remainingXp) {
+  const activityXp = getActivityXp(state.activityType, state.activityReward);
+  const completions = remainingXp === 0 ? 0 : Math.ceil(remainingXp / activityXp);
+  const unit = state.activityType === "machines" ? "machines" : "challenges";
+
+  elements.equivalencyBase.textContent = `For ${state.goal.rank}`;
+  elements.activityRewardLabel.textContent = state.activityReward.label;
+  elements.activityCount.textContent = formatNumber(completions);
+  elements.activityCountLabel.textContent = `estimated ${unit}`;
+  elements.activityBreakdown.innerHTML = "";
+
   const rows = [
-    ...Object.values(XP_DATA.labs.machines).map((item) => ({
-      label: item.label,
-      value: Math.ceil(remainingXp / item.total),
-      meta: `${formatNumber(item.total)} XP total`
-    })),
-    ...Object.values(XP_DATA.labs.challenges).map((item) => ({
-      label: item.label,
-      value: Math.ceil(remainingXp / item.xp),
-      meta: `${formatNumber(item.xp)} XP`
-    }))
+    { label: "Reward", value: `${formatNumber(activityXp)} XP` },
+    { label: "Remaining", value: `${formatNumber(remainingXp)} XP` }
   ];
 
-  elements.machineEquivalency.innerHTML = "";
+  if (state.activityType === "machines") {
+    rows.push({
+      label: "Machine split",
+      value: `${formatNumber(state.activityReward.user)} user / ${formatNumber(state.activityReward.root)} root`
+    });
+  }
+
   rows.forEach((row) => {
     const item = document.createElement("div");
     item.className = "metric-row";
     item.innerHTML = `
-      <div class="metric-meta">
-        <strong>${row.label}</strong>
-        <span>${row.meta}</span>
-      </div>
-      <strong>~ ${formatNumber(row.value)}</strong>
+      <span>${row.label}</span>
+      <strong>${row.value}</strong>
     `;
-    elements.machineEquivalency.append(item);
+    elements.activityBreakdown.append(item);
   });
-}
-
-function renderAcademyProjection(state) {
-  const academy = getAcademyXp(state);
-  const projected = advanceLevel(state.currentLevel, state.currentXp, academy.total);
-
-  elements.academyProjectionLabel.textContent = `${academy.reward.label} module`;
-  elements.academyProjectedXp.textContent = `${formatNumber(academy.total)} XP`;
-  elements.academyProjectedLevel.textContent = `${state.currentLevel} -> ${projected.level}`;
-  elements.academyProjectedRank.textContent = rankForLevel(projected.level);
-  elements.academyBonus.textContent = `${formatNumber(academy.bonus)} XP`;
 }
 
 function render() {
@@ -275,23 +241,26 @@ function render() {
 
   elements.nextLevelXp.textContent = `${formatNumber(state.nextLevelXp)} XP`;
   elements.currentRank.textContent = rankForLevel(state.currentLevel);
-  elements.targetLevel.textContent = state.goal.level;
+  elements.targetRank.textContent = state.goal.rank;
   elements.targetRemainingXp.textContent = formatNumber(targetRemaining);
-  elements.nextProgressPercent.textContent = `${Math.round(progressPercent)}%`;
   elements.progressLabel.textContent = `${formatNumber(state.currentXp)} / ${formatNumber(state.nextLevelXp)} XP`;
   elements.levelRange.textContent = `Level ${state.currentLevel} -> ${state.currentLevel + 1}`;
   elements.progressFill.style.width = `${progressPercent}%`;
 
   renderRankProjection(state);
-  renderActivityEquivalency(targetRemaining);
-  renderAcademyProjection(state);
+  renderActivityEquivalency(state, targetRemaining);
+}
 
-  elements.equivalencyBase.textContent = `For ${state.goal.rank}`;
-  elements.goalName.textContent = state.goal.rank;
-  elements.goalRequiredLevel.textContent = state.goal.level;
-  elements.goalCurrentLevel.textContent = state.currentLevel;
-  elements.goalRemainingLevels.textContent = Math.max(0, state.goal.level - state.currentLevel);
-  elements.goalEstimatedXp.textContent = `${formatNumber(targetRemaining)} XP`;
+function syncActivityDifficultyOptions() {
+  const current = elements.activityDifficulty.value || "medium";
+  const rewards = XP_DATA.labs[elements.activityType.value];
+  populateSelect(
+    elements.activityDifficulty,
+    DIFFICULTY_ORDER.filter((difficulty) => rewards[difficulty]).map((difficulty) => [difficulty, rewards[difficulty]]),
+    ([difficulty]) => difficulty,
+    ([, reward]) => reward.label.replace(" Machine", "").replace(" Challenge", "")
+  );
+  elements.activityDifficulty.value = rewards[current] ? current : "medium";
 }
 
 function bindEvents() {
@@ -299,16 +268,17 @@ function bindEvents() {
     field.addEventListener("input", render);
     field.addEventListener("change", render);
   });
+
+  elements.activityType.addEventListener("change", () => {
+    syncActivityDifficultyOptions();
+    render();
+  });
 }
 
 populateSelect(elements.goalSelect, RANK_THRESHOLDS, (rank) => rank.rank, (rank) => `${rank.rank} - Level ${rank.level}`);
-populateSelect(
-  elements.academyDifficulty,
-  Object.entries(XP_DATA.academy),
-  ([key]) => key,
-  ([, value]) => value.label
-);
 elements.goalSelect.value = "Grandmaster I";
-elements.academyDifficulty.value = "medium";
+elements.activityType.value = "machines";
+syncActivityDifficultyOptions();
+elements.activityDifficulty.value = "medium";
 bindEvents();
 render();

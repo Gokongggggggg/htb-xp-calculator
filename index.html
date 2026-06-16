@@ -14,7 +14,7 @@
             <div class="mark" aria-hidden="true">H</div>
             <div>
               <h1>HTB XP Calculator</h1>
-              <p>Rank XP projection from your current level to Grandmaster.</p>
+              <p>Track XP distance to HTB rank tiers up to Grandmaster.</p>
             </div>
           </div>
 
@@ -35,30 +35,25 @@
             </label>
 
             <div class="input-note">
-              Next level requires <strong id="nextLevelXp">422 XP</strong>. XP curve is community-derived until more level data is collected.
+              Next level needs <strong id="nextLevelXp">422 XP</strong>. XP curve is community-derived.
             </div>
           </form>
 
-          <div class="reward-panel" aria-label="Academy projection">
+          <div class="activity-panel" aria-label="Activity equivalency controls">
             <div class="panel-title">
-              <span>Academy projection</span>
+              <span>Activity reward</span>
             </div>
-            <div class="academy-form">
+            <div class="form-grid">
               <label>
-                Module difficulty
-                <select id="academyDifficulty"></select>
+                Activity type
+                <select id="activityType">
+                  <option value="machines">Machine</option>
+                  <option value="challenges">Challenge</option>
+                </select>
               </label>
               <label>
-                Sections
-                <input id="academySections" type="number" min="0" step="1" value="10" inputmode="numeric">
-              </label>
-              <label>
-                Questions
-                <input id="academyQuestions" type="number" min="0" step="1" value="10" inputmode="numeric">
-              </label>
-              <label class="check-row">
-                <input id="academyPathBonus" type="checkbox" checked>
-                Include path bonus
+                Difficulty
+                <select id="activityDifficulty"></select>
               </label>
             </div>
           </div>
@@ -68,19 +63,15 @@
           <div class="summary-strip" aria-label="Current progress summary">
             <div>
               <span>Current rank</span>
-              <strong id="currentRank">No rank</strong>
+              <strong id="currentRank">Apprentice I</strong>
             </div>
             <div>
-              <span>Target level</span>
-              <strong id="targetLevel">91</strong>
+              <span>Target rank</span>
+              <strong id="targetRank">Grandmaster I</strong>
             </div>
             <div>
               <span>Remaining XP</span>
               <strong id="targetRemainingXp">92,698</strong>
-            </div>
-            <div>
-              <span>Progress to next</span>
-              <strong id="nextProgressPercent">0%</strong>
             </div>
           </div>
 
@@ -106,61 +97,18 @@
               <div id="rankProjection" class="rank-list"></div>
             </section>
 
-            <section class="card">
+            <section class="card wide activity-card">
               <div class="card-heading">
                 <h2>Activity Equivalency</h2>
-                <span id="equivalencyBase">For selected target</span>
+                <span id="equivalencyBase">For Grandmaster I</span>
               </div>
-              <div id="machineEquivalency" class="metric-list"></div>
-            </section>
-
-            <section class="card">
-              <div class="card-heading">
-                <h2>Target Summary</h2>
-                <span id="goalName">Grandmaster</span>
-              </div>
-              <div class="goal-grid">
-                <div>
-                  <span>Required level</span>
-                  <strong id="goalRequiredLevel">91</strong>
+              <div class="activity-result">
+                <div class="activity-number">
+                  <span id="activityRewardLabel">Medium Machine</span>
+                  <strong id="activityCount">143</strong>
+                  <p id="activityCountLabel">estimated completions</p>
                 </div>
-                <div>
-                  <span>Current level</span>
-                  <strong id="goalCurrentLevel">16</strong>
-                </div>
-                <div>
-                  <span>Remaining levels</span>
-                  <strong id="goalRemainingLevels">75</strong>
-                </div>
-                <div>
-                  <span>Estimated XP</span>
-                  <strong id="goalEstimatedXp">92,698 XP</strong>
-                </div>
-              </div>
-            </section>
-
-            <section class="card wide">
-              <div class="card-heading">
-                <h2>Academy Projection</h2>
-                <span id="academyProjectionLabel">Medium module</span>
-              </div>
-              <div class="goal-grid">
-                <div>
-                  <span>Projected XP</span>
-                  <strong id="academyProjectedXp">900 XP</strong>
-                </div>
-                <div>
-                  <span>Projected level</span>
-                  <strong id="academyProjectedLevel">16 -> 18</strong>
-                </div>
-                <div>
-                  <span>Projected rank</span>
-                  <strong id="academyProjectedRank">Apprentice I</strong>
-                </div>
-                <div>
-                  <span>Path bonus</span>
-                  <strong id="academyBonus">500 XP</strong>
-                </div>
+                <div id="activityBreakdown" class="metric-list"></div>
               </div>
             </section>
           </div>
