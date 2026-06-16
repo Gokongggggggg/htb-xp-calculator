@@ -48,6 +48,7 @@ const elements = {
   currentLevel: document.querySelector("#currentLevel"),
   currentXp: document.querySelector("#currentXp"),
   goalSelect: document.querySelector("#goalSelect"),
+  activityGoalSelect: document.querySelector("#activityGoalSelect"),
   activityType: document.querySelector("#activityType"),
   activityDifficulty: document.querySelector("#activityDifficulty"),
   nextLevelXp: document.querySelector("#nextLevelXp"),
@@ -129,6 +130,8 @@ function getState() {
   const nextLevelXp = xpForNextLevel(currentLevel);
   const currentXp = clampNumber(elements.currentXp.value, 0, nextLevelXp - 1, 0);
   const goal = RANK_THRESHOLDS.find((item) => item.rank === elements.goalSelect.value) ?? RANK_THRESHOLDS.at(-3);
+  const activityGoal =
+    RANK_THRESHOLDS.find((item) => item.rank === elements.activityGoalSelect.value) ?? goal;
   const activityType = elements.activityType.value === "challenges" ? "challenges" : "machines";
   const activityDifficulty = elements.activityDifficulty.value || "medium";
   const activityReward = getActivityReward(activityType, activityDifficulty);
@@ -138,6 +141,7 @@ function getState() {
     nextLevelXp,
     currentXp,
     goal,
+    activityGoal,
     activityType,
     activityDifficulty,
     activityReward
@@ -232,7 +236,7 @@ function renderRankProjection(state) {
         <div class="status-icon" aria-hidden="true">${familyStatus.icon}</div>
         <div class="rank-meta">
           <strong>${family}</strong>
-          <span>${familyStatus.label} · ${status}</span>
+          <span>${familyStatus.label} - ${status}</span>
         </div>
         <div class="pill">Level ${firstTier.level}-${finalTier.level}</div>
       </summary>
@@ -250,7 +254,7 @@ function renderRankProjection(state) {
         <div class="status-icon" aria-hidden="true">${tierStatus.icon}</div>
         <div class="rank-meta">
           <strong>${rank.rank}</strong>
-          <span>${tierStatus.label}${remainingXp === 0 ? "" : ` · ${formatNumber(remainingXp)} XP remaining`}</span>
+          <span>${tierStatus.label}${remainingXp === 0 ? "" : ` - ${formatNumber(remainingXp)} XP remaining`}</span>
         </div>
         <div class="pill">Level ${rank.level}</div>
       `;
@@ -266,7 +270,7 @@ function renderActivityEquivalency(state, remainingXp) {
   const completions = remainingXp === 0 ? 0 : Math.ceil(remainingXp / activityXp);
   const unit = state.activityType === "machines" ? "machines" : "challenges";
 
-  elements.equivalencyBase.textContent = `For ${state.goal.rank}`;
+  elements.equivalencyBase.textContent = `For ${state.activityGoal.rank}`;
   elements.activityRewardLabel.textContent = state.activityReward.label;
   elements.activityCount.textContent = formatNumber(completions);
   elements.activityCountLabel.textContent = `estimated ${unit}`;
@@ -300,6 +304,7 @@ function render() {
   syncInputs(state);
 
   const targetRemaining = xpRemainingToLevel(state.currentLevel, state.currentXp, state.goal.level);
+  const activityRemaining = xpRemainingToLevel(state.currentLevel, state.currentXp, state.activityGoal.level);
   const progressPercent = Math.min(100, Math.max(0, (state.currentXp / state.nextLevelXp) * 100));
 
   elements.nextLevelXp.textContent = `${formatNumber(state.nextLevelXp)} XP`;
@@ -311,7 +316,7 @@ function render() {
   elements.progressFill.style.width = `${progressPercent}%`;
 
   renderRankProjection(state);
-  renderActivityEquivalency(state, targetRemaining);
+  renderActivityEquivalency(state, activityRemaining);
 }
 
 function syncActivityDifficultyOptions() {
@@ -339,7 +344,9 @@ function bindEvents() {
 }
 
 populateSelect(elements.goalSelect, RANK_THRESHOLDS, (rank) => rank.rank, (rank) => `${rank.rank} - Level ${rank.level}`);
+populateSelect(elements.activityGoalSelect, RANK_THRESHOLDS, (rank) => rank.rank, (rank) => `${rank.rank} - Level ${rank.level}`);
 elements.goalSelect.value = "Grandmaster I";
+elements.activityGoalSelect.value = "Grandmaster I";
 elements.activityType.value = "machines";
 syncActivityDifficultyOptions();
 elements.activityDifficulty.value = "medium";

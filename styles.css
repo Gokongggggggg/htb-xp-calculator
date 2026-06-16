@@ -2,11 +2,11 @@
   --bg: #08110f;
   --panel: #101b18;
   --panel-2: #15231f;
-  --surface: #f7fbf8;
-  --surface-2: #edf5f0;
-  --ink: #101817;
-  --muted: #64736d;
-  --line: #d9e5df;
+  --surface: #17231f;
+  --surface-2: #1d2c27;
+  --ink: #eef8f3;
+  --muted: #9aaca5;
+  --line: #2d4039;
   --dark-line: #284038;
   --green: #9fef0;
   --green-2: #6ef08c;
@@ -27,7 +27,7 @@ body {
   background:
     radial-gradient(circle at 10% 8%, rgba(159, 254, 240, 0.22), transparent 30%),
     radial-gradient(circle at 88% 14%, rgba(110, 240, 140, 0.16), transparent 34%),
-    linear-gradient(145deg, #08110f 0%, #12201c 50%, #eef5f1 50%, #f7fbf8 100%);
+    linear-gradient(145deg, #08110f 0%, #12201c 52%, #16231f 100%);
   color: var(--ink);
 }
 
@@ -51,7 +51,7 @@ select {
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 8px;
-  background: rgba(247, 251, 248, 0.86);
+  background: rgba(13, 24, 21, 0.92);
   box-shadow: var(--shadow);
   backdrop-filter: blur(18px);
   animation: rise-in 360ms ease both;
@@ -189,10 +189,10 @@ span {
 .summary-strip > div,
 .progress-area,
 .card {
-  border: 1px solid rgba(217, 229, 223, 0.92);
+  border: 1px solid rgba(69, 95, 86, 0.86);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.86);
-  box-shadow: 0 14px 38px rgba(18, 32, 28, 0.08);
+  background: rgba(23, 35, 31, 0.92);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.18);
 }
 
 .summary-strip > div {
@@ -236,7 +236,7 @@ strong {
   height: 14px;
   overflow: hidden;
   border-radius: 999px;
-  background: #dde9e3;
+  background: #263a34;
 }
 
 #progressFill {
@@ -324,7 +324,7 @@ h2 {
   height: 24px;
   place-items: center;
   border-radius: 7px;
-  background: #ffffff;
+  background: #243630;
   color: var(--teal);
   font-weight: 950;
   transition: transform 180ms ease, background 180ms ease;
@@ -332,7 +332,7 @@ h2 {
 
 .rank-group[open] summary::before {
   content: "-";
-  background: rgba(159, 254, 240, 0.5);
+  background: rgba(159, 254, 240, 0.18);
 }
 
 .status-icon {
@@ -341,7 +341,7 @@ h2 {
   height: 34px;
   place-items: center;
   border-radius: 8px;
-  background: #ffffff;
+  background: #263a34;
   color: var(--muted);
   font-size: 0.68rem;
   font-weight: 950;
@@ -356,7 +356,7 @@ h2 {
 
 .tier-list .rank-row {
   grid-template-columns: 46px minmax(120px, 1fr) auto;
-  background: #ffffff;
+  background: #182621;
 }
 
 .rank-group.is-complete,
@@ -387,12 +387,12 @@ h2 {
 .rank-group.is-next,
 .rank-row.is-next {
   border-color: rgba(19, 143, 134, 0.42);
-  background: rgba(255, 255, 255, 0.96);
+  background: rgba(23, 39, 34, 0.96);
 }
 
 .rank-group.is-next .status-icon,
 .rank-row.is-next .status-icon {
-  background: #dff6ef;
+  background: #1f4a42;
   color: var(--teal);
 }
 
@@ -424,8 +424,8 @@ h2 {
   min-height: 30px;
   padding: 5px 10px;
   border-radius: 999px;
-  background: #ffffff;
-  color: #20342f;
+  background: #263a34;
+  color: #dceae4;
   font-size: 0.78rem;
   font-weight: 950;
 }
@@ -437,18 +437,18 @@ h2 {
 .activity-card {
   background:
     linear-gradient(135deg, rgba(159, 254, 240, 0.16), transparent 52%),
-    rgba(255, 255, 255, 0.9);
+    rgba(18, 31, 27, 0.94);
 }
 
 .activity-controls {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(180px, 1.2fr) repeat(2, minmax(140px, 1fr));
   gap: 12px;
   margin-bottom: 14px;
   padding: 12px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.72);
+  background: rgba(12, 22, 19, 0.62);
 }
 
 .activity-controls label {
@@ -456,8 +456,8 @@ h2 {
 }
 
 .activity-controls select {
-  border-color: #c9d9d2;
-  background: #ffffff;
+  border-color: #344b43;
+  background: #13221e;
   color: var(--ink);
 }
 
@@ -499,7 +499,7 @@ h2 {
 }
 
 .metric-row {
-  background: #ffffff;
+  background: #172620;
 }
 
 .metric-row strong {
