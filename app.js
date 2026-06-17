@@ -47,11 +47,14 @@ const DIFFICULTY_ORDER = ["very_easy", "easy", "medium", "hard", "insane"];
 const elements = {
   currentLevel: document.querySelector("#currentLevel"),
   currentXp: document.querySelector("#currentXp"),
+  targetMode: document.querySelector("#targetMode"),
   goalSelect: document.querySelector("#goalSelect"),
+  goalLevel: document.querySelector("#goalLevel"),
+  goalRankField: document.querySelector("#goalRankField"),
+  goalLevelField: document.querySelector("#goalLevelField"),
   activityGoalSelect: document.querySelector("#activityGoalSelect"),
   activityType: document.querySelector("#activityType"),
   activityDifficulty: document.querySelector("#activityDifficulty"),
-  nextLevelXp: document.querySelector("#nextLevelXp"),
   currentRank: document.querySelector("#currentRank"),
   targetRank: document.querySelector("#targetRank"),
   targetRemainingXp: document.querySelector("#targetRemainingXp"),
@@ -116,6 +119,21 @@ function populateSelect(select, items, getValue, getLabel) {
   });
 }
 
+function goalFromState(currentLevel) {
+  if (elements.targetMode.value === "level") {
+    const level = clampNumber(elements.goalLevel.value, 1, 140, Math.max(currentLevel, 91));
+    const rank = currentRankThreshold(level);
+    return {
+      rank: `Level ${level}`,
+      family: rank.family,
+      level,
+      isCustomLevel: true
+    };
+  }
+
+  return RANK_THRESHOLDS.find((item) => item.rank === elements.goalSelect.value) ?? RANK_THRESHOLDS.at(-3);
+}
+
 function getActivityReward(type, difficulty) {
   const rewards = XP_DATA.labs[type];
   return rewards[difficulty] ?? rewards.medium ?? Object.values(rewards)[0];
@@ -129,7 +147,7 @@ function getState() {
   const currentLevel = clampNumber(elements.currentLevel.value, 1, 140, 16);
   const nextLevelXp = xpForNextLevel(currentLevel);
   const currentXp = clampNumber(elements.currentXp.value, 0, nextLevelXp - 1, 0);
-  const goal = RANK_THRESHOLDS.find((item) => item.rank === elements.goalSelect.value) ?? RANK_THRESHOLDS.at(-3);
+  const goal = goalFromState(currentLevel);
   const activityGoal =
     RANK_THRESHOLDS.find((item) => item.rank === elements.activityGoalSelect.value) ?? goal;
   const activityType = elements.activityType.value === "challenges" ? "challenges" : "machines";
@@ -152,6 +170,9 @@ function syncInputs(state) {
   elements.currentLevel.value = state.currentLevel;
   elements.currentXp.max = state.nextLevelXp - 1;
   elements.currentXp.value = state.currentXp;
+  elements.goalLevel.value = state.goal.isCustomLevel ? state.goal.level : elements.goalLevel.value;
+  elements.goalRankField.hidden = state.goal.isCustomLevel;
+  elements.goalLevelField.hidden = !state.goal.isCustomLevel;
 }
 
 function rankStateFor(rank, state) {
@@ -307,7 +328,6 @@ function render() {
   const activityRemaining = xpRemainingToLevel(state.currentLevel, state.currentXp, state.activityGoal.level);
   const progressPercent = Math.min(100, Math.max(0, (state.currentXp / state.nextLevelXp) * 100));
 
-  elements.nextLevelXp.textContent = `${formatNumber(state.nextLevelXp)} XP`;
   elements.currentRank.textContent = rankForLevel(state.currentLevel);
   elements.targetRank.textContent = state.goal.rank;
   elements.targetRemainingXp.textContent = formatNumber(targetRemaining);

@@ -31,13 +31,23 @@
             </label>
 
             <label>
+              Target type
+              <select id="targetMode">
+                <option value="rank">Rank</option>
+                <option value="level">Level</option>
+              </select>
+            </label>
+
+            <label id="goalRankField">
               Target rank
               <select id="goalSelect"></select>
             </label>
 
-            <div class="input-note">
-              Next level needs <strong id="nextLevelXp">422 XP</strong>. XP curve is community-derived.
-            </div>
+            <label id="goalLevelField" hidden>
+              Target level
+              <input id="goalLevel" type="number" min="1" max="140" step="1" value="91" inputmode="numeric">
+            </label>
+
           </form>
         </aside>
 
@@ -48,7 +58,7 @@
               <strong id="currentRank">Apprentice I</strong>
             </div>
             <div>
-              <span>Target rank</span>
+              <span>Target</span>
               <strong id="targetRank">Grandmaster I</strong>
             </div>
             <div>

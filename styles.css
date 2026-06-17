@@ -19,6 +19,10 @@
   box-sizing: border-box;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 body {
   position: relative;
   min-height: 100vh;
@@ -166,20 +170,6 @@ input:focus,
 select:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(159, 239, 0, 0.14);
-}
-
-.input-note {
-  padding: 14px;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  background: var(--surface);
-  color: var(--text-secondary);
-  font-size: 0.86rem;
-  line-height: 1.45;
-}
-
-.input-note strong {
-  color: var(--text);
 }
 
 span {
