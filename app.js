@@ -61,6 +61,10 @@ const elements = {
   progressLabel: document.querySelector("#progressLabel"),
   levelRange: document.querySelector("#levelRange"),
   progressFill: document.querySelector("#progressFill"),
+  xpGain: document.querySelector("#xpGain"),
+  xpGainLevel: document.querySelector("#xpGainLevel"),
+  xpGainRank: document.querySelector("#xpGainRank"),
+  xpGainProgress: document.querySelector("#xpGainProgress"),
   rankProjection: document.querySelector("#rankProjection"),
   equivalencyBase: document.querySelector("#equivalencyBase"),
   activityRewardLabel: document.querySelector("#activityRewardLabel"),
@@ -83,6 +87,22 @@ function xpRemainingToLevel(currentLevel, currentXp, targetLevel) {
     total += xpForNextLevel(level);
   }
   return total;
+}
+
+function applyXpGain(currentLevel, currentXp, xpGain) {
+  let level = currentLevel;
+  let xp = currentXp + xpGain;
+
+  while (level < 140 && xp >= xpForNextLevel(level)) {
+    xp -= xpForNextLevel(level);
+    level += 1;
+  }
+
+  return {
+    level,
+    xp,
+    nextLevelXp: xpForNextLevel(level)
+  };
 }
 
 function rankForLevel(level) {
@@ -153,6 +173,7 @@ function getState() {
   const activityType = elements.activityType.value === "challenges" ? "challenges" : "machines";
   const activityDifficulty = elements.activityDifficulty.value || "medium";
   const activityReward = getActivityReward(activityType, activityDifficulty);
+  const xpGain = clampNumber(elements.xpGain.value, 0, 999999, 1000);
 
   return {
     currentLevel,
@@ -162,7 +183,8 @@ function getState() {
     activityGoal,
     activityType,
     activityDifficulty,
-    activityReward
+    activityReward,
+    xpGain
   };
 }
 
@@ -170,6 +192,7 @@ function syncInputs(state) {
   elements.currentLevel.value = state.currentLevel;
   elements.currentXp.max = state.nextLevelXp - 1;
   elements.currentXp.value = state.currentXp;
+  elements.xpGain.value = state.xpGain;
   elements.goalLevel.value = state.goal.isCustomLevel ? state.goal.level : elements.goalLevel.value;
   elements.goalRankField.hidden = state.goal.isCustomLevel;
   elements.goalLevelField.hidden = !state.goal.isCustomLevel;
@@ -320,6 +343,14 @@ function renderActivityEquivalency(state, remainingXp) {
   });
 }
 
+function renderXpGainPreview(state) {
+  const preview = applyXpGain(state.currentLevel, state.currentXp, state.xpGain);
+
+  elements.xpGainLevel.textContent = `Level ${preview.level}`;
+  elements.xpGainRank.textContent = rankForLevel(preview.level);
+  elements.xpGainProgress.textContent = `${formatNumber(preview.xp)} / ${formatNumber(preview.nextLevelXp)} XP`;
+}
+
 function render() {
   const state = getState();
   syncInputs(state);
@@ -335,6 +366,7 @@ function render() {
   elements.levelRange.textContent = `Level ${state.currentLevel} -> ${state.currentLevel + 1}`;
   elements.progressFill.style.width = `${progressPercent}%`;
 
+  renderXpGainPreview(state);
   renderRankProjection(state);
   renderActivityEquivalency(state, activityRemaining);
 }

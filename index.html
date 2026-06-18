@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>HTB XP Calculator v1.0.1</title>
     <meta name="version" content="2026-06-16-2245">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
@@ -79,6 +82,36 @@
               <div id="progressFill"></div>
             </div>
           </div>
+
+          <details class="xp-preview">
+            <summary>
+              <div>
+                <span>Quick preview</span>
+                <strong>Check XP gain impact</strong>
+              </div>
+              <div class="pill">Hidden tool</div>
+            </summary>
+            <div class="xp-preview-body">
+              <label>
+                Add XP
+                <input id="xpGain" type="number" min="0" max="999999" step="1" value="1000" inputmode="numeric">
+              </label>
+              <div class="xp-preview-result">
+                <div>
+                  <span>After gain</span>
+                  <strong id="xpGainLevel">Level 18</strong>
+                </div>
+                <div>
+                  <span>Rank</span>
+                  <strong id="xpGainRank">Apprentice I</strong>
+                </div>
+                <div>
+                  <span>Progress</span>
+                  <strong id="xpGainProgress">136 / 466 XP</strong>
+                </div>
+              </div>
+            </div>
+          </details>
 
           <div class="content-grid">
             <section class="card wide">
