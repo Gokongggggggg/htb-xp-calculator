@@ -239,7 +239,9 @@ strong {
 }
 
 .xp-preview {
-  overflow: hidden;
+  position: relative;
+  z-index: 3;
+  overflow: visible;
   border: 1px solid var(--border);
   border-radius: 16px;
   background: #0d1729;
@@ -289,7 +291,7 @@ strong {
   position: absolute;
   left: 18px;
   bottom: calc(100% + 8px);
-  z-index: 2;
+  z-index: 10;
   display: inline-flex;
   align-items: center;
   gap: 8px;
