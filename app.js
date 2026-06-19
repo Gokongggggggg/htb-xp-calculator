@@ -193,7 +193,9 @@ function syncInputs(state) {
     elements.currentLevel.value = state.currentLevel;
   }
   elements.currentXp.max = state.nextLevelXp - 1;
-  elements.currentXp.value = state.currentXp;
+  if (document.activeElement !== elements.currentXp) {
+    elements.currentXp.value = state.currentXp;
+  }
   elements.xpGain.value = state.xpGain;
   elements.goalLevel.value = state.goal.isCustomLevel ? state.goal.level : elements.goalLevel.value;
   elements.goalRankField.hidden = state.goal.isCustomLevel;
