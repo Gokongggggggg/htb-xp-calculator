@@ -74,7 +74,7 @@ const elements = {
 };
 
 function xpForNextLevel(level) {
-  return 422 + (level - 16) * 22;
+  return 423 + (level - 17) * 22;
 }
 
 function xpRemainingToLevel(currentLevel, currentXp, targetLevel) {
@@ -189,7 +189,9 @@ function getState() {
 }
 
 function syncInputs(state) {
-  elements.currentLevel.value = state.currentLevel;
+  if (document.activeElement !== elements.currentLevel) {
+    elements.currentLevel.value = state.currentLevel;
+  }
   elements.currentXp.max = state.nextLevelXp - 1;
   elements.currentXp.value = state.currentXp;
   elements.xpGain.value = state.xpGain;

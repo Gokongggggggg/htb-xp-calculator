@@ -11,7 +11,7 @@ Open `index.html` in a browser.
 The calculator uses the current community-derived XP model:
 
 ```text
-XP required for next level = 422 + ((currentLevel - 16) * 22)
+XP required for next level = 423 + ((currentLevel - 17) * 22)
 ```
 
 This is marked as community-derived until more data points are collected.
