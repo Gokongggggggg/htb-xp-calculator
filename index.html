@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>HTB XP Calculator – Hack The Box Rank & Level Calculator</title>
+    <meta
+      name="description"
+      content="Free HTB XP Calculator for Hack The Box players. Estimate remaining XP, level progress, target ranks, and machine or challenge completions."
+    >
+    <meta name="author" content="Gokong">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <meta name="theme-color" content="#0b1220">
+
+    <link
+      rel="canonical"
+      href="https://gokongggggggg.github.io/htb-xp-calculator/"
+    >
+
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="HTB XP Calculator">
+    <meta
+      property="og:title"
+      content="HTB XP Calculator – Rank, Level & XP Progress"
+    >
+    <meta
+      property="og:description"
+      content="Estimate your Hack The Box XP progress, remaining XP, target rank, and activity equivalents."
+    >
+    <meta
+      property="og:url"
+      content="https://gokongggggggg.github.io/htb-xp-calculator/"
+    >
+
+    <meta name="twitter:card" content="summary">
+    <meta
+      name="twitter:title"
+      content="HTB XP Calculator – Rank, Level & XP Progress"
+    >
+    <meta
+      name="twitter:description"
+      content="Estimate your Hack The Box XP progress, target rank, and activity equivalents."
+    >
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&family=Space+Grotesk:wght@600;700&display=swap"
+      rel="stylesheet"
+    >
+    <link rel="stylesheet" href="styles.css">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "HTB XP Calculator",
+      "url": "https://gokongggggggg.github.io/htb-xp-calculator/",
+      "description": "A free community-made calculator for estimating Hack The Box XP, level progress, target ranks, and activity equivalents.",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "Any",
+      "browserRequirements": "Requires JavaScript",
+      "isAccessibleForFree": true,
+      "author": {
+        "@type": "Person",
+        "name": "Gokong"
+      }
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is the HTB XP Calculator?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The HTB XP Calculator is a free community-made tool for estimating Hack The Box XP progress, remaining XP, target levels, target ranks, and activity equivalents."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I calculate the XP needed for an HTB rank?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Enter your current level and current XP progress, select Rank as the target type, and choose the rank you want to reach. The calculator displays the estimated remaining XP."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can this calculator estimate machine or challenge completions?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. The Activity Equivalency section estimates how many machines or challenges of a selected difficulty may be needed to reach the chosen target."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is this an official Hack The Box tool?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. This is an independent community project and is not affiliated with or endorsed by Hack The Box."
+          }
+        }
+      ]
+    }
+    </script>
+  </head>
+
+  <body>
+    <main class="app-shell">
+      <section class="workspace" aria-label="HTB XP calculator">
+        <aside class="control-panel">
+          <div class="brand-row">
+            <div class="mark" aria-hidden="true">H</div>
+            <div>
+              <h1>HTB XP Calculator</h1>
+              <p>
+                Calculate Hack The Box XP, level progress, and distance to
+                target rank tiers up to Grandmaster.
+              </p>
+            </div>
+          </div>
+
+          <form id="calculatorForm" class="form-grid">
+            <label>
+              Current level
+              <input
+                id="currentLevel"
+                type="number"
+                min="1"
+                max="140"
+                step="1"
+                value="16"
+                inputmode="numeric"
+              >
+            </label>
+
+            <label>
+              Current XP progress
+              <input
+                id="currentXp"
+                type="number"
+                min="0"
+                step="1"
+                value="2"
+                inputmode="numeric"
+              >
+            </label>
+
+            <label>
+              Target type
+              <select id="targetMode">
+                <option value="rank">Rank</option>
+                <option value="level">Level</option>
+              </select>
+            </label>
+
+            <label id="goalRankField">
+              Target rank
+              <select id="goalSelect"></select>
+            </label>
+
+            <label id="goalLevelField" hidden>
+              Target level
+              <input
+                id="goalLevel"
+                type="number"
+                min="1"
+                max="140"
+                step="1"
+                value="91"
+                inputmode="numeric"
+              >
+            </label>
+          </form>
+        </aside>
+
+        <section class="results-panel" aria-label="HTB XP calculation results">
+          <div class="summary-strip" aria-label="Current progress summary">
+            <div>
+              <span>Current rank</span>
+              <strong id="currentRank">Apprentice I</strong>
+            </div>
+            <div>
+              <span>Target</span>
+              <strong id="targetRank">Grandmaster I</strong>
+            </div>
+            <div>
+              <span>Remaining XP</span>
+              <strong id="targetRemainingXp">0</strong>
+            </div>
+          </div>
+
+          <div class="progress-area">
+            <div class="progress-header">
+              <div>
+                <span>Level progress</span>
+                <strong id="progressLabel">0 / 0 XP</strong>
+              </div>
+              <span id="levelRange">Level 16 → 17</span>
+            </div>
+            <div
+              class="progress-track"
+              role="progressbar"
+              aria-label="Current level XP progress"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow="0"
+            >
+              <div id="progressFill"></div>
+            </div>
+          </div>
+
+          <details class="xp-preview">
+            <summary aria-describedby="xpGainTooltip">
+              <div>
+                <strong>Quick XP check</strong>
+              </div>
+              <span id="xpGainTooltip" class="xp-tooltip" role="tooltip">
+                <span aria-hidden="true">i</span>
+                Preview your level after adding XP from the current state.
+              </span>
+            </summary>
+
+            <div class="xp-preview-body">
+              <label>
+                Add XP
+                <input
+                  id="xpGain"
+                  type="number"
+                  min="0"
+                  max="999999"
+                  step="1"
+                  value="1000"
+                  inputmode="numeric"
+                >
+              </label>
+
+              <div class="xp-preview-result">
+                <div>
+                  <span>After gain</span>
+                  <strong id="xpGainLevel">Level 16</strong>
+                </div>
+                <div>
+                  <span>Rank</span>
+                  <strong id="xpGainRank">Apprentice I</strong>
+                </div>
+                <div>
+                  <span>Progress</span>
+                  <strong id="xpGainProgress">0 / 0 XP</strong>
+                </div>
+              </div>
+            </div>
+          </details>
+
+          <div class="content-grid">
+            <section class="card wide">
+              <div class="card-heading">
+                <h2>HTB Rank Projection</h2>
+                <span>Open a rank to view its tiers</span>
+              </div>
+              <div id="rankProjection" class="rank-list"></div>
+            </section>
+
+            <section class="card wide activity-card">
+              <div class="card-heading">
+                <h2>HTB Activity Equivalency</h2>
+                <span id="equivalencyBase">For Grandmaster I</span>
+              </div>
+
+              <div
+                class="activity-controls"
+                aria-label="Activity equivalency controls"
+              >
+                <label>
+                  Activity target
+                  <select id="activityGoalSelect"></select>
+                </label>
+
+                <label>
+                  Activity type
+                  <select id="activityType">
+                    <option value="machines">Machine</option>
+                    <option value="challenges">Challenge</option>
+                  </select>
+                </label>
+
+                <label>
+                  Difficulty
+                  <select id="activityDifficulty"></select>
+                </label>
+              </div>
+
+              <div class="activity-result">
+                <div class="activity-number">
+                  <span id="activityRewardLabel">Medium Machine</span>
+                  <strong id="activityCount">0</strong>
+                  <p id="activityCountLabel">estimated machines</p>
+                </div>
+                <div id="activityBreakdown" class="metric-list"></div>
+              </div>
+            </section>
+          </div>
+        </section>
+      </section>
+
+      <section class="seo-content" aria-labelledby="about-calculator">
+        <h2 id="about-calculator">Free HTB XP Calculator</h2>
+        <p>
+          HTB XP Calculator is a free, browser-based tool for Hack The Box
+          players who want a clearer view of their XP progression. Enter your
+          current level and XP progress, then choose a target rank or target
+          level to estimate how much XP remains.
+        </p>
+        <p>
+          The calculator also provides rank projections and activity
+          equivalency estimates. This makes it easier to compare a target
+          against possible machine or challenge completions without manually
+          calculating each XP step.
+        </p>
+
+        <h2>How to use the Hack The Box XP calculator</h2>
+        <ol>
+          <li>Enter your current HTB level.</li>
+          <li>Enter the XP already earned toward your next level.</li>
+          <li>Select whether your goal is a rank or a specific level.</li>
+          <li>Choose your target and review the estimated remaining XP.</li>
+          <li>
+            Use Activity Equivalency to compare the target with machine or
+            challenge completions.
+          </li>
+        </ol>
+
+        <h2>Calculator features</h2>
+        <ul>
+          <li>Current HTB rank estimation</li>
+          <li>Target rank and target level calculation</li>
+          <li>Remaining XP estimation</li>
+          <li>Level progress preview</li>
+          <li>XP gain simulation</li>
+          <li>Machine completion equivalency</li>
+          <li>Challenge completion equivalency</li>
+        </ul>
+
+        <h2>Frequently asked questions</h2>
+
+        <h3>What is the HTB XP Calculator?</h3>
+        <p>
+          It is a community-made utility that estimates Hack The Box XP
+          progress, target ranks, target levels, and activity equivalents from
+          the values entered by the user.
+        </p>
+
+        <h3>How do I calculate the XP needed for an HTB rank?</h3>
+        <p>
+          Enter your current level and XP progress, select <strong>Rank</strong>
+          as the target type, and choose the rank you want to reach. The
+          remaining XP estimate updates automatically.
+        </p>
+
+        <h3>Can it estimate machine or challenge completions?</h3>
+        <p>
+          Yes. Select an activity target, activity type, and difficulty in the
+          Activity Equivalency section. The result provides an estimated number
+          of completions for the selected target.
+        </p>
+
+        <h3>Is this an official Hack The Box calculator?</h3>
+        <p>
+          No. This is an independent community project and is not affiliated
+          with or endorsed by Hack The Box. Estimates may change if the
+          platform changes its XP or rank system.
+        </p>
+
+        <p class="seo-note">
+          Built as a free community utility for HTB players. Source code is
+          available in the
+          <a
+            href="https://github.com/Gokongggggggg/htb-xp-calculator"
+            rel="noopener noreferrer"
+          >GitHub repository</a>.
+        </p>
+      </section>
+    </main>
+
+    <noscript>
+      <p class="noscript-message">
+        This calculator requires JavaScript to calculate HTB XP progression.
+      </p>
+    </noscript>
+
+    <script src="app.js"></script>
+  </body>
+</html>
