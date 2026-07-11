@@ -113,7 +113,7 @@
 
   <body>
     <main class="app-shell">
-      <section class="workspace" aria-label="HTB XP calculator">
+      <section id="calculator" class="workspace" aria-label="HTB XP calculator">
         <aside class="control-panel">
           <div class="brand-row">
             <div class="mark" aria-hidden="true">H</div>
@@ -132,10 +132,10 @@
               <input
                 id="currentLevel"
                 type="number"
-                min="1"
-                max="140"
+                min="0"
+                max="157"
                 step="1"
-                value="16"
+                value="1"
                 inputmode="numeric"
               >
             </label>
@@ -147,7 +147,7 @@
                 type="number"
                 min="0"
                 step="1"
-                value="2"
+                value="0"
                 inputmode="numeric"
               >
             </label>
@@ -171,20 +171,30 @@
                 id="goalLevel"
                 type="number"
                 min="1"
-                max="140"
+                max="157"
                 step="1"
                 value="91"
                 inputmode="numeric"
               >
             </label>
           </form>
+
+          <nav class="section-nav" aria-label="Page navigation">
+            <a href="#faq">FAQ</a>
+          </nav>
+
+          <p class="research-notice">
+            <strong>XP system update:</strong> HTB has changed the XP required
+            per level. This calculator currently combines manually verified
+            data with temporary estimates and remains ongoing community research.
+          </p>
         </aside>
 
         <section class="results-panel" aria-label="HTB XP calculation results">
           <div class="summary-strip" aria-label="Current progress summary">
             <div>
               <span>Current rank</span>
-              <strong id="currentRank">Apprentice I</strong>
+              <strong id="currentRank">Beginner I</strong>
             </div>
             <div>
               <span>Target</span>
@@ -244,11 +254,11 @@
               <div class="xp-preview-result">
                 <div>
                   <span>After gain</span>
-                  <strong id="xpGainLevel">Level 16</strong>
+                  <strong id="xpGainLevel">Level 1</strong>
                 </div>
                 <div>
                   <span>Rank</span>
-                  <strong id="xpGainRank">Apprentice I</strong>
+                  <strong id="xpGainRank">Beginner I</strong>
                 </div>
                 <div>
                   <span>Progress</span>
@@ -310,7 +320,7 @@
       </section>
 
       <section class="seo-content" aria-labelledby="about-calculator">
-        <h2 id="about-calculator">Free HTB XP Calculator</h2>
+        <h2 id="about-calculator">HTB XP Calculator</h2>
         <p>
           HTB XP Calculator is a free, browser-based tool for Hack The Box
           players who want a clearer view of their XP progression. Enter your
@@ -347,35 +357,72 @@
           <li>Challenge completion equivalency</li>
         </ul>
 
-        <h2>Frequently asked questions</h2>
+        <section class="formula-note" aria-labelledby="formula-heading">
+          <h2 id="formula-heading">How the XP estimate is calculated</h2>
+          <p>
+            Known levels use manually collected HTB thresholds. When a level
+            is still missing from the dataset, the calculator estimates it
+            between the closest verified lower and upper levels.
+          </p>
+          <p class="formula-line">
+            Estimated XP = lower XP × (upper XP ÷ lower XP) ^ relative position
+          </p>
+          <p>
+            This geometric interpolation follows the observed curved growth
+            more closely than a fixed XP increase. Multi-level targets add each
+            threshold in between, then subtract XP already earned at the current level.
+          </p>
+          <p class="accuracy-note">
+            <strong>Ongoing research:</strong> HTB has updated its per-level XP
+            progression. Manual values are used exactly where available; levels
+            without verified data are temporary estimates and may differ from HTB.
+          </p>
+        </section>
 
-        <h3>What is the HTB XP Calculator?</h3>
-        <p>
-          It is a community-made utility that estimates Hack The Box XP
-          progress, target ranks, target levels, and activity equivalents from
-          the values entered by the user.
-        </p>
+        <section id="faq" class="faq-section" aria-labelledby="faq-heading">
+          <div class="faq-heading">
+            <div>
+              <h2 id="faq-heading">Frequently asked questions</h2>
+            </div>
+            <a href="#calculator">Back to calculator <span aria-hidden="true">↑</span></a>
+          </div>
 
-        <h3>How do I calculate the XP needed for an HTB rank?</h3>
-        <p>
-          Enter your current level and XP progress, select <strong>Rank</strong>
-          as the target type, and choose the rank you want to reach. The
-          remaining XP estimate updates automatically.
-        </p>
+          <details class="faq-item">
+            <summary>What is the HTB XP Calculator?</summary>
+            <p>
+              It is a community-made utility that estimates Hack The Box XP
+              progress, target ranks, target levels, and activity equivalents from
+              the values entered by the user.
+            </p>
+          </details>
 
-        <h3>Can it estimate machine or challenge completions?</h3>
-        <p>
-          Yes. Select an activity target, activity type, and difficulty in the
-          Activity Equivalency section. The result provides an estimated number
-          of completions for the selected target.
-        </p>
+          <details class="faq-item">
+            <summary>How do I calculate the XP needed for an HTB rank?</summary>
+            <p>
+              Enter your current level and XP progress, select <strong>Rank</strong>
+              as the target type, and choose the rank you want to reach. The
+              remaining XP estimate updates automatically.
+            </p>
+          </details>
 
-        <h3>Is this an official Hack The Box calculator?</h3>
-        <p>
-          No. This is an independent community project and is not affiliated
-          with or endorsed by Hack The Box. Estimates may change if the
-          platform changes its XP or rank system.
-        </p>
+          <details class="faq-item">
+            <summary>Can it estimate machine or challenge completions?</summary>
+            <p>
+              Yes. Select an activity target, activity type, and difficulty in the
+              Activity Equivalency section. The result provides an estimated number
+              of completions for the selected target.
+            </p>
+          </details>
+
+          <details class="faq-item">
+            <summary>Is this an official Hack The Box calculator?</summary>
+            <p>
+              No. This is an independent community project and is not affiliated
+              with or endorsed by Hack The Box. Estimates may change if the
+              platform changes its XP or rank system.
+            </p>
+          </details>
+        </section>
 
         <p class="seo-note">
           Built as a free community utility for HTB players. Source code is

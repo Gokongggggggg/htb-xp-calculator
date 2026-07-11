@@ -43,6 +43,30 @@ const RANK_THRESHOLDS = [
 
 const RANK_FAMILIES = [...new Set(RANK_THRESHOLDS.map((rank) => rank.family))];
 const DIFFICULTY_ORDER = ["very_easy", "easy", "medium", "hard", "insane"];
+const MAX_SUPPORTED_LEVEL = 157;
+
+// Community-researched HTB thresholds collected manually in July 2026.
+// Missing levels are estimated between the nearest verified data points.
+const MANUAL_XP_BY_LEVEL = {
+  0: 150, 1: 150, 2: 196, 3: 221, 4: 240, 5: 257, 6: 273, 7: 288,
+  8: 302, 10: 331, 11: 347, 12: 361, 13: 376, 14: 391, 15: 407,
+  16: 422, 17: 439, 18: 455, 19: 472, 20: 489, 21: 508, 24: 564,
+  25: 584, 26: 604, 27: 625, 28: 647, 29: 669, 30: 691, 31: 716,
+  32: 739, 33: 765, 34: 790, 36: 843, 38: 901, 39: 930, 40: 960,
+  41: 992, 42: 1024, 43: 1058, 44: 1091, 45: 1127, 46: 1163,
+  47: 1200, 48: 1239, 49: 1278, 50: 1319, 51: 1361, 52: 1404,
+  53: 1448, 54: 1494, 55: 1541, 56: 1589, 57: 1638, 58: 1690,
+  59: 1743, 60: 1797, 61: 1852, 62: 1910, 63: 1969, 65: 2092,
+  68: 2290, 69: 2361, 70: 2433, 71: 2507, 72: 2584, 75: 2826,
+  76: 2911, 77: 2999, 78: 3090, 79: 3182, 80: 3279, 81: 3376,
+  85: 3799, 87: 4030, 88: 4149, 89: 4273, 90: 4400, 91: 4530,
+  93: 4803, 94: 4944, 95: 5091, 96: 5240, 100: 5885, 101: 6058,
+  103: 6418, 104: 6606, 105: 6799, 107: 7202, 108: 7413,
+  111: 8079, 113: 8555, 122: 11059, 123: 11378, 134: 15538,
+  141: 18925, 143: 20019, 157: 29632
+};
+
+const VERIFIED_XP_LEVELS = Object.keys(MANUAL_XP_BY_LEVEL).map(Number).sort((a, b) => a - b);
 
 const elements = {
   currentLevel: document.querySelector("#currentLevel"),
@@ -74,7 +98,25 @@ const elements = {
 };
 
 function xpForNextLevel(level) {
-  return 423 + (level - 17) * 22;
+  const normalizedLevel = clampNumber(level, 0, MAX_SUPPORTED_LEVEL, 0);
+  const verifiedXp = MANUAL_XP_BY_LEVEL[normalizedLevel];
+
+  if (verifiedXp !== undefined) {
+    return verifiedXp;
+  }
+
+  const lowerLevel = VERIFIED_XP_LEVELS.filter((item) => item < normalizedLevel).at(-1);
+  const upperLevel = VERIFIED_XP_LEVELS.find((item) => item > normalizedLevel);
+
+  if (lowerLevel === undefined || upperLevel === undefined) {
+    return MANUAL_XP_BY_LEVEL[lowerLevel ?? upperLevel] ?? 150;
+  }
+
+  const lowerXp = MANUAL_XP_BY_LEVEL[lowerLevel];
+  const upperXp = MANUAL_XP_BY_LEVEL[upperLevel];
+  const position = (normalizedLevel - lowerLevel) / (upperLevel - lowerLevel);
+
+  return Math.round(lowerXp * Math.pow(upperXp / lowerXp, position));
 }
 
 function xpRemainingToLevel(currentLevel, currentXp, targetLevel) {
@@ -93,7 +135,7 @@ function applyXpGain(currentLevel, currentXp, xpGain) {
   let level = currentLevel;
   let xp = currentXp + xpGain;
 
-  while (level < 140 && xp >= xpForNextLevel(level)) {
+  while (level < MAX_SUPPORTED_LEVEL && xp >= xpForNextLevel(level)) {
     xp -= xpForNextLevel(level);
     level += 1;
   }
@@ -141,7 +183,7 @@ function populateSelect(select, items, getValue, getLabel) {
 
 function goalFromState(currentLevel) {
   if (elements.targetMode.value === "level") {
-    const level = clampNumber(elements.goalLevel.value, 1, 140, Math.max(currentLevel, 91));
+    const level = clampNumber(elements.goalLevel.value, 1, MAX_SUPPORTED_LEVEL, Math.max(currentLevel, 91));
     const rank = currentRankThreshold(level);
     return {
       rank: `Level ${level}`,
@@ -164,7 +206,7 @@ function getActivityXp(type, reward) {
 }
 
 function getState() {
-  const currentLevel = clampNumber(elements.currentLevel.value, 1, 140, 16);
+  const currentLevel = clampNumber(elements.currentLevel.value, 0, MAX_SUPPORTED_LEVEL, 1);
   const nextLevelXp = xpForNextLevel(currentLevel);
   const currentXp = clampNumber(elements.currentXp.value, 0, nextLevelXp - 1, 0);
   const goal = goalFromState(currentLevel);
