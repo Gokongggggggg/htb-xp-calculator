@@ -989,6 +989,19 @@ h2 {
   background: rgba(159, 239, 0, 0.055);
 }
 
+.accuracy-summary {
+  max-width: none !important;
+  margin-top: 12px !important;
+  padding: 15px 16px;
+  border: 1px solid rgba(159, 239, 0, 0.22);
+  border-radius: 12px;
+  background: var(--surface-subtle);
+}
+
+.accuracy-summary strong {
+  color: var(--accent);
+}
+
 .xp-table-wrap {
   margin-top: 18px;
   overflow: hidden;

@@ -116,6 +116,14 @@
         },
         {
           "@type": "Question",
+          "name": "How accurate is the HTB XP estimate?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "An internal cross-check across 95 observed XP values currently shows an average difference of about 0.30%, or roughly 1 XP. The largest observed test difference is 14%, or 21 XP, so uncovered levels remain estimates while the dataset continues to grow."
+          }
+        },
+        {
+          "@type": "Question",
           "name": "Is this an official Hack The Box tool?",
           "acceptedAnswer": {
             "@type": "Answer",
@@ -380,6 +388,14 @@
             points. The exact HTB formula is still unknown, so expanding the
             dataset will progressively improve coverage and accuracy.
           </p>
+
+          <p class="accuracy-summary">
+            <strong>Current model check:</strong> Across 95 observed XP values,
+            the average difference is about <strong>0.30%</strong>, or roughly
+            <strong>1 XP</strong>. The largest test difference is currently
+            <strong>14% (21 XP)</strong>, so individual estimates can still vary
+            and the research remains ongoing.
+          </p>
         </section>
 
         <h2>How to use the Hack The Box XP calculator</h2>
@@ -516,6 +532,16 @@
               The model uses XP from HTB Labs machine user and root flags and
               from completed challenges. Reward values vary by difficulty and
               power the activity-equivalency estimate.
+            </p>
+          </details>
+
+          <details class="faq-item">
+            <summary>How accurate is the HTB XP estimate?</summary>
+            <p>
+              An internal cross-check across 95 observed XP values currently
+              shows an average difference of about 0.30%, or roughly 1 XP. The
+              largest test difference is 14%, or 21 XP, so uncovered levels
+              remain estimates while the dataset continues to grow.
             </p>
           </details>
 
