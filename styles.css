@@ -932,8 +932,10 @@ h2 {
 -------------------------------------------------- */
 
 .seo-content {
+  display: block;
   width: 100%;
-  margin: 24px auto 40px;
+  max-width: none;
+  margin: 16px 0 40px;
   padding: 34px;
   border: 1px solid var(--border);
   border-radius: 18px;
@@ -941,6 +943,103 @@ h2 {
   box-shadow: var(--shadow);
   color: var(--text-secondary);
   line-height: 1.75;
+}
+
+.research-section,
+.xp-earned-section {
+  margin-top: 38px;
+}
+
+.research-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.research-stat {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+}
+
+.research-stat strong {
+  color: var(--accent);
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 3vw, 2rem);
+  line-height: 1;
+}
+
+.research-stat span {
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.dataset-note {
+  max-width: none !important;
+  margin-top: 16px !important;
+  padding: 14px 16px;
+  border-left: 3px solid var(--accent);
+  border-radius: 0 10px 10px 0;
+  background: rgba(159, 239, 0, 0.055);
+}
+
+.xp-table-wrap {
+  margin-top: 18px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.xp-reward-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  background: var(--surface-subtle);
+  font-variant-numeric: tabular-nums;
+}
+
+.xp-reward-table caption {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-align: left;
+}
+
+.xp-reward-table th,
+.xp-reward-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+  text-align: right;
+}
+
+.xp-reward-table th {
+  color: var(--text);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.xp-reward-table th:first-child {
+  text-align: left;
+}
+
+.xp-reward-table tbody td {
+  color: var(--accent);
+  font-weight: 800;
+}
+
+.xp-reward-table tbody tr:last-child > * {
+  border-bottom: 0;
 }
 
 .faq-section {
@@ -1159,7 +1258,7 @@ select:focus-visible {
 @media (max-width: 980px) {
   .seo-content {
     width: 100%;
-    margin: 16px auto 24px;
+    margin: 12px 0 24px;
     padding: 28px;
   }
 }
@@ -1179,6 +1278,16 @@ select:focus-visible {
   .seo-content ol,
   .seo-content ul {
     padding-left: 20px;
+  }
+
+  .research-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .xp-reward-table th,
+  .xp-reward-table td {
+    padding: 9px 6px;
+    font-size: 0.7rem;
   }
 
   .faq-heading {
